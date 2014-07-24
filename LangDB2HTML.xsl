@@ -2,7 +2,7 @@
 
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-	<xsl:output omit-xml-declaration="yes" indent="yes" />
+	<xsl:output method="html" omit-xml-declaration="yes" indent="yes" />
 
 	<xsl:param name="id"  select="'1000'"/>	
 	<xsl:param name="myOrder" select="4000" />
@@ -163,7 +163,15 @@
 				<tr>
 					<td>
 						<span class="langTag">Morphology</span>
+						
+						<!-- testing now 
+						<h1 class='{position()}'><xsl:value-of select="position()"></xsl:value-of></h1>
+						<span><xsl:copy-of select="Morphology/Pronoun"></xsl:copy-of></span>
+						<span><xsl:value-of select="Morphology/Pronoun"></xsl:value-of></span>
+						
 						<br />
+						-->
+						
 					</td>
 				</tr>
 				<tr>
