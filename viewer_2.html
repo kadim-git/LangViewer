@@ -10,7 +10,7 @@
 	//var langsInDB = 0;
 
 	//The List of Languages from DB
-	var xmlFile = "./DB/_pilotSchema_8.xml";
+	var xmlFile = "./DB/_pilotSchema_9.xml";
 	var xsltLangList = "LangList.xsl";
 	var xsltLangDB2HTML = "LangDB2HTML.xsl";//XSLT fire for One Language transformation for Viewer (with strategies)
 	var xml;//Loaded XML DB file
@@ -61,6 +61,13 @@
 
 				// success!
 				xml = this.responseXML;
+
+				// TEST JAVASCRIPT 
+				// var LangName0=xml.getElementsByTagName("LangID").length;
+				//alert("lang 000="+LangName0);
+				// var LangName1=xml.getElementsByTagName("LangID")[1].childNodes[0].nodeValue; 
+				// alert("lang 111="+LangName1);
+
 				//processXML_DB(this.responseXML);
 				//alert("Language DB will be processed!");
 				requestXMLFile(xsltLangList, handler4XSLT_LangList);
@@ -120,10 +127,10 @@
 
 	function clickShowStrat(poss2show) {
 		var displayed = true;
-		if (poss2show == 'stratTablePronPoss') {
+		if (poss2show == 'StrategyPronomTable') {
 			displayed = pronPossDisplay;
 			pronPossDisplay = !pronPossDisplay;
-		} else if (poss2show == 'nominPoss') {
+		} else if (poss2show == 'stratTableNomPoss') {
 			displayed = nominPossDisplay;
 			nominPossDisplay = !nominPossDisplay;
 		}
@@ -134,19 +141,20 @@
 		}
 	}
 
-	function showHideStrategies(possClass, displayStrat) {
+	function showHideStrategies(possTable, displayStrat) {
 		//alert("watch your strategies");
 		//document.getElementById("example").appendChild(resultDocument);
-		var strategiesPronPoss = document.getElementsByClassName(possClass);
-		var displValue = 'block'
+		var strategiesPronPoss = document.getElementById(possTable);
+		var displValue = 'table'
 		if (displayStrat) {
-			displValue = 'block';
+			displValue = 'table';
 		} else {
 			displValue = 'none';
 		}
-		for (var row = 0; row < strategiesPronPoss.length; row++) {
-			strategiesPronPoss[row].style.display = displValue;
-		}
+		strategiesPronPoss.style.display = displValue;
+	//	for (var row = 0; row < strategiesPronPoss.length; row++) {
+		//	strategiesPronPoss[row].style.display = displValue;
+	//	}
 	}
 
 	function LangsInDB() {
@@ -235,14 +243,74 @@
 		ex1.removeChild(ex1.childNodes[0]);
 
 		document.getElementById("example").appendChild(resultDocument);
-		showHideStrategies('stratTablePronPoss', pronPossDisplay);
-		showHideStrategies('nominPoss', nominPossDisplay);
+		showHideStrategies('StrategyPronomTable', pronPossDisplay);
+		showHideStrategies('stratTableNomPoss', nominPossDisplay);
 	}
 </script>
 <style type="text/css">
 .debug {
 	color: red;
 	font-weight: bold;
+}
+
+.attrValue {
+	font-weight: bold;
+	}
+.attrNameValue {
+	white-space: nowrap;
+	
+}
+
+.examplesTD {
+	white-space: nowrap;
+	font-family: monospace;
+	font-size: larger;
+}
+
+.pPron,.pPosor,.pMorp,.pPosed,.pText {
+	background-color: #e2e9e5;
+}
+
+.pPron {
+	color: #ac0000;
+}
+
+.pPosor {
+	color: #004900;
+}
+
+.pMorp {
+	font-weight: bold;
+	color: #0000ca;
+}
+
+.pPosed {
+	font-weight: bold;
+}
+
+.pText {
+	
+}
+
+.StrategyPronomHeaderRow {
+	background-color: #aea9a4
+}
+
+.MorphRow {
+	background-color: #a7d7ff;
+}
+
+.SyntEnvRow {
+	background-color: #d5ffa7;
+}
+
+.SemantRow {
+	background-color: #fff2a7;
+	vertical-align: top;
+}
+
+#StrategyPronomTable td {
+	width: 5em;
 }
 
 .stratTag {
@@ -274,12 +342,12 @@
 	background-color: #D0D090;
 }
 
-.stratTablePronPoss {
+#stratTableNomPoss {
 	clear: both;
 	min-width: 3000px;
 }
 
-.stratTablePronPoss table {
+#stratTableNomPoss table {
 	border-width: 2px;
 	position: relative;
 	float: left;
@@ -295,7 +363,7 @@
 	background-color: #F0F000;
 }
 
-.stratTablePronPoss,.nominPoss,.pronPoss {
+#StrategyPronomTable, #stratTableNomPoss,.pronPoss {
 	display: none;
 }
 
@@ -307,11 +375,6 @@ th {
 	font-size: x-large;
 }
 
-.examplesTD {
-	white-space: nowrap;
-	font-family: monospace;
-}
-
 table,th {
 	border-style: solid;
 	border-width: 2px;
@@ -321,7 +384,7 @@ table,th {
 
 td {
 	border-style: solid;
-	border-width: 1px;
+	border-width: 2px;
 	border-collapse: collapse;
 	border-style: solid;
 }
