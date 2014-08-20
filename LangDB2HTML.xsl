@@ -180,10 +180,10 @@
 								</span>
 								<br />
 								<span class="attrNameValue">
-									Placement=
+									MorphStatus=
 									<span class="attrValue">
 
-										<xsl:value-of select="Pronoun/@Placement" />
+										<xsl:value-of select="Pronoun/@MorphStatus" />
 									</span>
 								</span>
 
