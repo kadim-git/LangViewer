@@ -102,6 +102,8 @@
 	</xsl:template>
 
 	<xsl:template match="Language/Possession/PronominalPossession">
+	<xsl:variable name="StrategiesSet" select="StrategyPronom | StrategyPronomNonCanonical"></xsl:variable>
+	
 		<div class="pronPossHeader">
 			<table class="possTable">
 				<tr>
@@ -116,19 +118,29 @@
 			<table id="StrategyPronomTable">
 				<tr class="StrategyPronomHeaderRow">
 					<th rowspan="2"></th>
-					<xsl:for-each select="StrategyPronom">
+					<xsl:for-each select="$StrategiesSet">
 
 						<th class="stratTH" style="">
-							Strategy:
+							<span class="attrNameValue">Strategy:
 							<xsl:value-of select="position()" />
+							
+							, ID:
+							<xsl:value-of select="@StrategyID" />
+							</span>
+							<br />
+							<xsl:if test="self::StrategyPronomNonCanonical">
+								<span>NonCanonical</span>
+							</xsl:if>
 
 
 						</th>
 					</xsl:for-each>
-
+					<!-- <xsl:for-each select="StrategyPronomNonCanonical"> <th class="stratTH" 
+						style=""> Strategy: <xsl:value-of select="position()" /> <br />NonCanonical 
+						<xsl:if test="self::StrategyPronomNonCanonical"> TRUE </xsl:if> </th> </xsl:for-each> -->
 				</tr>
 				<tr class="StrategyPronomHeaderRow">
-					<xsl:for-each select="StrategyPronom">
+					<xsl:for-each select="$StrategiesSet">
 						<xsl:variable name="columMaxLength"
 							select="string-length(SyntEnvironment/Adnominal/Text)" />
 
@@ -154,7 +166,8 @@
 						<br />
 						Pronoun
 					</td>
-					<xsl:for-each select="StrategyPronom/Morphology">
+					<xsl:for-each
+						select="$StrategiesSet/Morphology">
 
 						<td>
 
@@ -180,10 +193,10 @@
 								</span>
 								<br />
 								<span class="attrNameValue">
-									MorphStatus=
+									AttachmentSite=
 									<span class="attrValue">
 
-										<xsl:value-of select="Pronoun/@MorphStatus" />
+										<xsl:value-of select="Pronoun/@AttachmentSite" />
 									</span>
 								</span>
 
@@ -199,7 +212,8 @@
 						<br />
 						Morpheme
 					</td>
-					<xsl:for-each select="StrategyPronom/Morphology">
+					<xsl:for-each
+						select="$StrategiesSet/Morphology">
 
 						<td>
 							<xsl:apply-templates select="Morpheme" />
@@ -214,16 +228,19 @@
 				</tr>
 
 				<tr class="SyntEnvRow">
-					<td>SyntEnvironment</td>
-					<xsl:for-each select="StrategyPronom/SyntEnvironment">
+					<td>
+						<span>
+							SyntEnvironment
+						</span>
+						<br />
+						<span class="stratTag">
+							Adnominal
+						</span>
+					</td>
+					<xsl:for-each
+						select="$StrategiesSet/SyntEnvironment">
 
 						<td>
-							<span class="stratTag">
-								Example Adnominal
-							</span>
-							<br />
-							<!-- <span class="examplesTD"> <xsl:value-of select="Adnominal/Text" 
-								/> </span> <br /> -->
 							<span class="examplesTD">
 								<xsl:apply-templates select="Adnominal[1]/Text" />
 							</span>
@@ -239,91 +256,138 @@
 					</xsl:for-each>
 				</tr>
 
-				<tr class="SemantRow">
-					<td>Semantics</td>
-					<xsl:for-each select="StrategyPronom">
-						<td>
-							<span class="attrNameValue"> 
-							<span class="stratTag">Posessor: </span>
+<!-- 
+				<xsl:if
+					test="$StrategiesSet/SyntEnvironment/Predicative/Gloss[string-length(normalize-space(.)) > 0] ">
 
-							
-							<xsl:call-template name="elemMixedProc">
-								<xsl:with-param name="node2Proc" select="Semantics/Posessor" />
-							</xsl:call-template>
+					<tr class="SyntEnvRow">
+						<td>
+							<span>
+								SyntEnvironment from IF
 							</span>
 							<br />
+							<span class="stratTag">
+								Predicative
+							</span>
+						</td>
+						<xsl:for-each
+							select="StrategyPronom/SyntEnvironment | StrategyPronomNonCanonical/SyntEnvironment">
 
-							<span class="stratTag">Possessed:</span>
-							<span class="attrNameValue">
-								ObligatoryPossessed=
-								<span class="attrValue">
-									"
-									<xsl:value-of select="Semantics/Possessed/@ObligatoryPossessed" />
-									"
-								</span>
-<br />
-							</span> 
-							<xsl:if test="Semantics/Possessed/@BodyParts">
-								<span class="attrNameValue">
-									BodyParts=
-									<span class="attrValue">
-										"
-										<xsl:value-of select="Semantics/Possessed/@BodyParts" />
-										"
-									</span>
-								</span>
-							</xsl:if>
-
-							<xsl:if test="Semantics/Possessed/@Clothes">
-								<span class="attrNameValue">
-									Clothes=
-									<span class="attrValue">
-										"
-										<xsl:value-of select="Semantics/Possessed/@Clothes" />
-										"
-									</span>
+							<td>
+								<span class="examplesTD">
+									<xsl:apply-templates select="Predicative[1]/Text" />
 								</span>
 								<br />
-							</xsl:if>
-							<xsl:if test="Semantics/Possessed/@Kinship">
-								<span class="attrNameValue">
-									Kinship=
-									<span class="attrValue">
-										"
-										<xsl:value-of select="Semantics/Possessed/@Kinship" />
-										"
-									</span>
-								</span>
-							</xsl:if>
-
-							<xsl:if test="Semantics/Possessed/@PlantParts">
-								<span class="attrNameValue">
-									PlantParts=
-									<span class="attrValue">
-										"
-										<xsl:value-of select="Semantics/Possessed/@PlantParts" />
-										"
-									</span>
+								<span class="examplesTD">
+									<xsl:value-of select="Predicative/Gloss" />
 								</span>
 								<br />
-							</xsl:if>
+								<span class="examplesTD">
+									<xsl:value-of select="Predicative/Translation" />
+								</span>
+							</td>
+						</xsl:for-each>
+					</tr>
+				</xsl:if>
+ -->
+ 				
+				<xsl:call-template name="SyntEnvTemplate">
+					<xsl:with-param name="ExampleType" select="'Predicative'" />
+				</xsl:call-template>
 
-							<xsl:if test="Semantics/Possessed/@Others">
+
+				<xsl:call-template name="SyntEnvTemplate">
+					<xsl:with-param name="ExampleType" select="'EllidedPossessed'" />
+				</xsl:call-template>
+
+
+				<tr class="SemantRow">
+					<td>Semantics</td>
+					<xsl:for-each select="$StrategiesSet">
+						<td>
+							<xsl:if test="Semantics">
 								<span class="attrNameValue">
-									Others=
+									<span class="stratTag">Posessor: </span>
+
+
+									<xsl:call-template name="elemMixedProc">
+										<xsl:with-param name="node2Proc" select="Semantics/Posessor" />
+									</xsl:call-template>
+								</span>
+								<br />
+
+								<span class="stratTag">Possessed:</span>
+								<span class="attrNameValue">
+									ObligatoryPossessed=
 									<span class="attrValue">
 										"
-										<xsl:value-of select="Semantics/Possessed/@Others" />
+										<xsl:value-of select="Semantics/Possessed/@ObligatoryPossessed" />
 										"
-									</span> 
+									</span>
+									<br />
 								</span>
-							</xsl:if>
+								<xsl:if test="Semantics/Possessed/@BodyParts">
+									<span class="attrNameValue">
+										BodyParts=
+										<span class="attrValue">
+											"
+											<xsl:value-of select="Semantics/Possessed/@BodyParts" />
+											"
+										</span>
+									</span>
+								</xsl:if>
 
-							<p>
-								<xsl:call-template name="elemMixedProc">
-									<xsl:with-param name="node2Proc" select="Semantics/Possessed" />
-								</xsl:call-template>
-							</p>
+								<xsl:if test="Semantics/Possessed/@Clothes">
+									<span class="attrNameValue">
+										Clothes=
+										<span class="attrValue">
+											"
+											<xsl:value-of select="Semantics/Possessed/@Clothes" />
+											"
+										</span>
+									</span>
+									<br />
+								</xsl:if>
+								<xsl:if test="Semantics/Possessed/@Kinship">
+									<span class="attrNameValue">
+										Kinship=
+										<span class="attrValue">
+											"
+											<xsl:value-of select="Semantics/Possessed/@Kinship" />
+											"
+										</span>
+									</span>
+								</xsl:if>
+
+								<xsl:if test="Semantics/Possessed/@PlantParts">
+									<span class="attrNameValue">
+										PlantParts=
+										<span class="attrValue">
+											"
+											<xsl:value-of select="Semantics/Possessed/@PlantParts" />
+											"
+										</span>
+									</span>
+									<br />
+								</xsl:if>
+
+								<xsl:if test="Semantics/Possessed/@Others">
+									<span class="attrNameValue">
+										Others=
+										<span class="attrValue">
+											"
+											<xsl:value-of select="Semantics/Possessed/@Others" />
+											"
+										</span>
+									</span>
+								</xsl:if>
+
+								<p>
+									<xsl:call-template name="elemMixedProc">
+										<xsl:with-param name="node2Proc" select="Semantics/Possessed" />
+									</xsl:call-template>
+								</p>
+							</xsl:if>
 						</td>
 
 					</xsl:for-each>
@@ -334,7 +398,46 @@
 
 	</xsl:template>
 
-	<xsl:template match="Adnominal/Text">
+	<xsl:template name="SyntEnvTemplate">
+		<xsl:param name="ExampleType" />
+<!-- 		<xsl:param name="StrategyNode" />
+ -->
+		<xsl:if
+			test="*/SyntEnvironment/node()[name()=$ExampleType]/Gloss[string-length(normalize-space(.))>0] ">
+			<tr class="SyntEnvRow">
+				<td>
+					<span>
+						SyntEnvironment
+					</span>
+					<br />
+					<span class="stratTag">
+						<xsl:value-of select="$ExampleType"></xsl:value-of>
+					</span>
+				</td>
+				<xsl:for-each
+					select="*/SyntEnvironment ">
+
+					<td>
+						<span class="examplesTD">
+							<xsl:apply-templates select="node()[name()=$ExampleType][1]/Text" />
+						</span>
+						<br />
+						<span class="examplesTD">
+							<xsl:value-of select="node()[name()=$ExampleType]/Gloss" />
+						</span>
+						<br />
+						<span class="examplesTD">
+							<xsl:value-of select="node()[name()=$ExampleType]/Translation" />
+						</span>
+					</td>
+				</xsl:for-each>
+			</tr>
+		</xsl:if>
+	</xsl:template>
+
+
+
+	<xsl:template match="Text">
 		<xsl:for-each select="node()">
 			<xsl:if test="self::pPron">
 				<span class="pPron" title="Pronoun">
@@ -391,9 +494,9 @@
 		</span>
 		<br />
 		<span class="attrNameValue">
-			Placement=
+			AttachmentSite=
 			<span class="attrValue">
-				<xsl:value-of select="@Placement" />
+				<xsl:value-of select="@AttachmentSite" />
 			</span>
 		</span>
 		<br />
@@ -566,232 +669,7 @@
 
 	</xsl:template>
 
-	<xsl:template match="PronStrategy">
-		Strategy
-		<xsl:value-of select="@refStrategyID" />
-		<xsl:if test="following-sibling::PronStrategy">
-			,
-		</xsl:if>
-	</xsl:template>
-
-
-	<!-- STRATEGY TEMPLATE FOR PronominalPossession -->
-	<xsl:template match="PronominalPossession/Strategy">
-		<table>
-			<tr>
-				<th>
-					Strategy:
-					<xsl:value-of select="position()" />
-				</th>
-			</tr>
-			<tr>
-				<td>
-					<xsl:if test="@Complexity">
-						<span>
-							Complexity=
-							<xsl:value-of select="@Complexity" />
-						</span>
-					</xsl:if>
-					<xsl:if test="@Complexity and @Replaceable">
-						<span>,
-						</span>
-					</xsl:if>
-					<xsl:if test="@Replaceable">
-						<span>
-							Replaceable=
-							<xsl:value-of select="@Replaceable" />
-						</span>
-					</xsl:if>
-				</td>
-			</tr>
-
-
-			<xsl:if test="Morphology">
-				<tr>
-					<td>
-						<span class="langTag">Morphology</span>
-
-						<!-- testing now <h1 class='{position()}'><xsl:value-of select="position()"></xsl:value-of></h1> 
-							<span><xsl:copy-of select="Morphology/Pronoun"></xsl:copy-of></span> <span><xsl:value-of 
-							select="Morphology/Pronoun"></xsl:value-of></span> <br /> -->
-
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<xsl:if test="Morphology/Pronoun">
-							<span class="stratTag">
-								Pronoun
-							</span>
-							<br />
-							<span>
-								Dedication=
-								<xsl:value-of select="Morphology/Pronoun/@Dedication" />
-								<br />
-							</span>
-							<span>
-								SharedwithNominal=
-								<xsl:value-of select="Morphology/Pronoun/@SharedwithNominal" />
-								<br />
-							</span>
-							<span>
-								Placement=
-								<xsl:value-of select="Morphology/Pronoun/@Placement" />
-							</span>
-
-						</xsl:if>
-					</td>
-				</tr>
-				<xsl:if test="Morphology/Morpheme">
-					<tr>
-						<td>
-
-							<span class="stratTag">
-								Morpheme
-							</span>
-							<br />
-							<span>
-								Placement=
-								<xsl:value-of select="Morphology/Morpheme/@Placement" />
-
-							</span>
-							<br />
-							<xsl:if test="Morphology/Morpheme/@SharedWithNominal">
-								<span>
-									SharedWithNominal=
-									<xsl:value-of select="Morphology/Morpheme/@SharedWithNominal" />
-								</span>
-								<br />
-							</xsl:if>
-							<xsl:if test="Morphology/Morpheme/@pronoun">
-								<span>
-									P???ronoun=
-									<xsl:value-of select="Morphology/Morpheme/@pronoun" />
-								</span>
-							</xsl:if>
-
-						</td>
-					</tr>
-				</xsl:if>
-
-			</xsl:if>
-
-			<tr>
-				<td>
-					<span class="langTag"> SyntEnvironment</span>
-					<br />
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<span class="stratTag">
-						Example Adnominal
-					</span>
-					<br />
-					<span class="examplesTD">
-						<xsl:value-of select="SyntEnvironment/Adnominal/Text" />
-						<br />
-					</span>
-					<span class="examplesTD">
-						<xsl:value-of select="SyntEnvironment/Adnominal/Gloss" />
-						<br />
-					</span>
-					<span class="examplesTD">
-						<xsl:value-of select="SyntEnvironment/Adnominal/Translation" />
-					</span>
-
-
-				</td>
-			</tr>
-
-			<tr>
-				<td>
-					<span class="langTag"> Semantics</span>
-					<br />
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<span class="stratTag">Posessor: </span>
-
-
-					<xsl:call-template name="elemMixedProc">
-						<xsl:with-param name="node2Proc" select="Semantics/Posessor" />
-					</xsl:call-template>
-
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<span class="stratTag">Possessed:</span>
-					<span>
-						ObligatoryPossessed="
-						<xsl:value-of select="Semantics/Possessed/@ObligatoryPossessed" />
-						"
-					</span>
-					<xsl:if test="Semantics/Possessed/@BodyParts">
-						<span>
-							BodyParts="
-							<xsl:value-of select="Semantics/Possessed/@BodyParts" />
-							"
-						</span>
-					</xsl:if>
-
-					<xsl:if test="Semantics/Possessed/@Clothes">
-						<span>
-							Clothes="
-							<xsl:value-of select="Semantics/Possessed/@Clothes" />
-							"
-						</span>
-					</xsl:if>
-					<xsl:if test="Semantics/Possessed/@Kinship">
-						<span>
-							Kinship="
-							<xsl:value-of select="Semantics/Possessed/@Kinship" />
-							"
-						</span>
-					</xsl:if>
-					<xsl:if test="Semantics/Possessed/@PlantParts">
-						<span>
-							PlantParts="
-							<xsl:value-of select="Semantics/Possessed/@PlantParts" />
-							"
-						</span>
-					</xsl:if>
-
-					<xsl:if test="Semantics/Possessed/@Others">
-						<span>
-							Others="
-							<xsl:value-of select="Semantics/Possessed/@Others" />
-							"
-						</span>
-					</xsl:if>
-
-					<p>
-						<xsl:call-template name="elemMixedProc">
-							<xsl:with-param name="node2Proc" select="Semantics/Possessed" />
-						</xsl:call-template>
-					</p>
-
-				</td>
-			</tr>
-
-			<tr>
-				<td>
-					<span class="stratTag">Relation: </span>
-
-					<xsl:call-template name="elemMixedProc">
-						<xsl:with-param name="node2Proc" select="Semantics/RelationPRPD" />
-					</xsl:call-template>
-
-				</td>
-			</tr>
-
-		</table>
-
-	</xsl:template>
-
-
+ 
 	<xsl:template match="Country">
 
 		<span>
